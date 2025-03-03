@@ -57,7 +57,7 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    return "";
+    return [question.id, question.name.slice(0, 10)].join(": ");
 }
 
 /**
@@ -78,7 +78,14 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    return "";
+    let prints: string = "# " + question.name + "\n" + question.body;
+    if (question.type === "multiple_choice_question"){
+        for (let i = 0; i<question.options.length; i++){
+            prints += "\n- " + question.options[i];
+        }
+
+    }
+    return prints;
 }
 
 /**
@@ -86,7 +93,9 @@ export function toMarkdown(question: Question): string {
  * `newName`.
  */
 export function renameQuestion(question: Question, newName: string): Question {
-    return question;
+    return {
+        id: question.id, name: newName, type: question.type, body: question.body, expected: question.expected, options: question.options, points: question.points, published: question.published,
+    };
 }
 
 /**
@@ -95,7 +104,9 @@ export function renameQuestion(question: Question, newName: string): Question {
  * published; if it was published, now it should be not published.
  */
 export function publishQuestion(question: Question): Question {
-    return question;
+    return{
+        id: question.id, name: question.name, type: question.type, body: question.body, expected: question.expected, options: question.options, points: question.points, published: !question.published,
+    };
 }
 
 /**
@@ -105,7 +116,9 @@ export function publishQuestion(question: Question): Question {
  * The `published` field should be reset to false.
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
-    return oldQuestion;
+    return{
+        id, name: "Copy of " + oldQuestion.name, type: oldQuestion.type, body: oldQuestion.body, expected: oldQuestion.expected, options: oldQuestion.options, points: oldQuestion.points, published: false,
+    };
 }
 
 /**
@@ -116,7 +129,14 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * Check out the subsection about "Nested Fields" for more information.
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    let list: string[] = []
+    for (let i=0;i<question.options.length; i++){
+        list.push(question.options[i])
+    }
+    list.push(newOption)
+    return{
+        id: question.id, name: question.name, type: question.type, body: question.body, expected: question.expected, options: list, points: question.points, published: question.published,
+    };
 }
 
 /**
@@ -133,5 +153,7 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number }
 ): Question {
-    return contentQuestion;
+    return{
+        id, name, type: contentQuestion.type, body: contentQuestion.body, expected: contentQuestion.expected, options: contentQuestion.options, points, published: false,
+    };
 }
